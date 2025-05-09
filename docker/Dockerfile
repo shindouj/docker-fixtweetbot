@@ -3,10 +3,8 @@
 FROM python:3.13-alpine AS builder
 WORKDIR /usr/local/app
 
-COPY ./ ./
-
 RUN apk add --no-cache git linux-headers cargo rust
-RUN git clone https://github.com/Kyrela/FixTweetBot.git
+RUN git clone https://github.com/Kyrela/FixTweetBot.git .
 
 RUN python -m venv /usr/local/venv && . /usr/local/venv/bin/activate
 RUN /usr/local/venv/bin/pip install --no-cache-dir -r requirements.txt && \
