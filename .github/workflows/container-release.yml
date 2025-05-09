@@ -16,13 +16,13 @@ jobs:
     - name: Get latest commit hash
       id: get-latest-commit
       run: |
-        echo "commit=$(git ls-remote https://github.com/zyachel/quetre.git | head -n1 | awk '{print $1;}')" >> $GITHUB_OUTPUT
+        echo "commit=$(git ls-remote https://github.com/Kyrela/FixTweetBot.git | head -n1 | awk '{print $1;}')" >> $GITHUB_OUTPUT
       shell: bash
 
     - uses: actions/cache@v4
       id: cache
       with:
-        path: quetre-built
+        path: fixtweetbot-built
         key: ${{ runner.os }}-dumb-${{ steps.get-latest-commit.outputs.commit }}-${{ hashFiles('**/lockfiles') }}
 
     # arm64 specific
@@ -52,13 +52,13 @@ jobs:
         file: docker/Dockerfile
         platforms: linux/amd64,linux/arm64/v8
         push: true
-        tags: ghcr.io/shindouj/quetre:latest
+        tags: ghcr.io/shindouj/fixtweetbot:latest
         build-args: release=1
         no-cache-filters: "build"
 
     - name: Set cache key
       if: steps.cache.outputs.cache-hit != 'true'
-      run: echo "done" > quetre-built
+      run: echo "done" > fixtweetbot-built
 
   workflow-keepalive:
     if: github.event_name == 'schedule'

@@ -1,40 +1,50 @@
 services:
-  quetre:
-    container_name: quetre
-    image: ghcr.io/shindouj/quetre:latest
+  bot:
+    image: fixtweetbot:latest
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:3000:3000" # Replace with "3000:3000" if you don't use a reverse proxy
-    environment:
-      - "NODE_ENV=production"
-      - "PORT=3000"
-      - "CACHE_PERIOD=1h"
-      - "REDIS_URL=quetre-redis:6379"
-      - "REDIS_TTL=3600"
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    networks:
-      - quetre
-    healthcheck:
-      test: wget -nv --tries=1 --spider http://127.0.0.1:3000 || exit 1
-      interval: 1m
-      timeout: 3s
     depends_on:
-      quetre-redis:
-        condition: service_healthy
-        restart: true
-  quetre-redis:
-    container_name: quetre-redis
-    image: docker.io/redis:alpine
+      - db
+    # You do NOT need to repeat these configuration values in the override file. They are automatically supplied to the bot.
+    environment:
+      # Should be equal to the name of the database container.
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      # Should be equal to MYSQL_DATABASE.
+      - DATABASE_NAME=fixtweetbot
+      # Should be equal to MYSQL_USER.
+      - DATABASE_USER=fixtweetbot
+      # Should be equal to MYSQL_PASSWORD.
+      - DATABASE_PASSWORD=changeme123
+      # Your Discord bot token.
+      - DISCORD_TOKEN=your_discord_bot_token
+      # Not optional - bot does not run with this config parameter unset
+      - DEV_GUILD=your_discord_dev_guild_id
+    # uncomment and create file if you want to override any default settings
+    # volumes:
+    #    - ./override.config.yml:/usr/local/app/override.config.yml:ro
+
+  db:
+    image: mysql:8.0
     restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=fixtweetbot
+      - MYSQL_USER=fixtweetbot
+      # Generate a random password for this field.
+      - MYSQL_PASSWORD=changeme123
+      # Generate a random password for this field. Do not use the same password!
+      - MYSQL_ROOT_PASSWORD=changeme234
+      - TZ=UTC
+    volumes:
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: redis-cli ping
-      interval: 30s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
       timeout: 5s
-      retries: 2
-    networks:
-      - quetre
-networks:
-  quetre:
+      retries: 5
+      start_period: 30s
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
+    driver: local

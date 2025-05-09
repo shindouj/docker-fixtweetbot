@@ -1,9 +1,9 @@
-# docker-quetre
+# docker-fixtweetbot
 
-`docker pull ghcr.io/shindouj/quetre:latest`
+`docker pull ghcr.io/shindouj/fixtweetbot:latest`
 
-A [Quetre](https://github.com/zyachel/quetre) image, forked from [PussTheCat](https://github.com/PussTheCat-org/docker-quetre-quay).
-Used for the [jeikobu.net](https://quetre.jeikobu.net) instance. The main difference is creating images only when an actual change in code has occured.
+A [FixTweetBot](https://github.com/Kyrela/FixTweetBot) image, based on my [Quetre](https://github.com/shindouj/docker-quetre) build script, which was forked from [PussTheCat](https://github.com/PussTheCat-org/docker-quetre-quay).
+Used for my own bot instance.
 
 ## Usage:
 
