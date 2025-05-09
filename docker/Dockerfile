@@ -47,7 +47,7 @@ COPY --from=builder /usr/local/app /usr/local/app
 
 RUN chown -R $USR:$GRP .
 
-COPY docker-entrypoint.sh /
+COPY docker/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
 USER $USR
